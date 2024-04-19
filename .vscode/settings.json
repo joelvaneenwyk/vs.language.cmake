@@ -4,6 +4,8 @@
         "out": false,
         "typings": false
     },
+    "eslint.experimental.useFlatConfig": true,
+    "eslint.configFile": "./eslint.config.mjs",
     "search.exclude": {
         "**/node_modules": true,
         "**/bower_components": true,

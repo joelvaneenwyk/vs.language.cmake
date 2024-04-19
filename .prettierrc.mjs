@@ -1,3 +1,6 @@
+import { Config } from 'prettier';
+
+/** @type {Config} */
 const config = {
     printWidth: 120,
     singleQuote: true,

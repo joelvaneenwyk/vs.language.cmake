@@ -1,5 +1,11 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+/**
+ * CMake Tools extension for Visual Studio Code
+ *
+ * The module 'vscode' contains the VS Code extensibility API
+ * Import the module and reference it with the alias vscode in your code below
+ */
+
+import opener from 'opener'; // This requires esModuleInterop to be enabled in 'tsconfig.json'
 import {
     CancellationToken,
     CompletionItem,
@@ -17,7 +23,6 @@ import {
     workspace
 } from 'vscode';
 import child_process = require("child_process");
-
 /// strings Helpers
 function strContains(word: string, pattern: string): boolean {
     return word.indexOf(pattern) > -1;
@@ -65,7 +70,7 @@ interface CMakeError extends Error {
 
 // Simple helper function that invoke the CMAKE executable
 // and return a promise with stdout
-let cmake = (args: string[]): Promise<string> => {
+function cmake(args: string[]): Promise<string> {
     return new Promise((resolve, reject): void => {
         let cmake_config = config<string>('cmakePath', 'cmake');
         let cmake_args = commandArgs2Array(cmake_config);
@@ -139,88 +144,52 @@ async function cmake_help_url() {
 
 
 // return the cmake command list
-function cmake_help_command_list(): Promise<string> {
+async function cmake_help_command_list(): Promise<string> {
     return cmake(['--help-command-list']);
 }
 
-function cmake_help_command(name: string): Promise<string> {
-    return cmake_help_command_list()
-        .then(function (result: string) {
-            let contains = result.indexOf(name) > -1;
-            return new Promise(function (resolve, reject) {
-                if (contains) {
-                    resolve(name);
-                } else {
-                    reject('not found');
-                }
-            });
-        }, function (e) { })
-        .then((n: string): Promise<string> => {
-            return cmake(['--help-command', n]);
-        }, null);
+async function cmake_help_command(name: string): Promise<string> {
+    const result = await cmake_help_command_list();
+    if (result.indexOf(name) < 0) {
+        throw new Error(`Failed to find command: ${name}`);
+    }
+    return cmake(['--help-command', name]);
 }
-
 
 function cmake_help_variable_list(): Promise<string> {
     return cmake(['--help-variable-list']);
 }
 
-function cmake_help_variable(name: string): Promise<string> {
-    return cmake_help_variable_list()
-        .then(function (result: string) {
-            let contains = result.indexOf(name) > -1;
-            return new Promise(function (resolve, reject) {
-                if (contains) {
-                    resolve(name);
-                } else {
-                    reject('not found');
-                }
-            });
-        }, function (e) { }).then((name: string) => {
-            return cmake(['--help-variable', name]);
-        }, null);
+async function cmake_help_variable(name: string): Promise<string> {
+    const result = await cmake_help_variable_list();
+    if (result.indexOf(name) < 0) {
+        throw new Error(`Failed to find variable: ${name}`);
+    }
+    return cmake(['--help-variable', name]);
 }
-
 
 function cmake_help_property_list(): Promise<string> {
     return cmake(['--help-property-list']);
 }
 
-function cmake_help_property(name: string): Promise<string> {
-    return cmake_help_property_list()
-        .then(function (result: string) {
-            let contains = result.indexOf(name) > -1;
-            return new Promise(function (resolve, reject) {
-                if (contains) {
-                    resolve(name);
-                } else {
-                    reject('not found');
-                }
-            });
-        }, (e): void => { })
-        .then((name: string): Promise<string> => {
-            return cmake(['--help-property', name]);
-        }, null);
+async function cmake_help_property(name: string): Promise<string> {
+    const result = await cmake_help_property_list();
+    if (result.indexOf(name) < 0) {
+        throw new Error(`Failed to find variable: ${name}`);
+    }
+    return cmake(['--help-property', name]);
 }
 
 function cmake_help_module_list(): Promise<string> {
     return cmake(['--help-module-list']);
 }
 
-function cmake_help_module(name: string): Promise<string> {
-    return cmake_help_module_list()
-        .then(function (result: string) {
-            let contains = result.indexOf(name) > -1;
-            return new Promise(function (resolve, reject) {
-                if (contains) {
-                    resolve(name);
-                } else {
-                    reject('not found');
-                }
-            });
-        }, (e) => { }).then((name: string): Promise<string> => {
-            return cmake(['--help-module', name]);
-        }, null);
+async function cmake_help_module(name: string): Promise<string> {
+    const result = await cmake_help_module_list();
+    if (result.indexOf(name) < 0) {
+        throw new Error(`Failed to find variable: ${name}`);
+    }
+    return cmake(['--help-module', name]);
 }
 
 function cmake_help_all() {
@@ -233,8 +202,7 @@ function cmake_help_all() {
         },
         'variable': (name: string) => {
             return cmake_help_variable(name);
-        }
-        ,
+        },
         'property': (name: string) => {
             return cmake_help_property(name);
         }
@@ -251,8 +219,6 @@ async function cmake_online_help(search: string) {
         cmModulesSuggestionsExact(search),
         cmPropertiesSuggestionsExact(search),
     ]).then(function (results) {
-        var opener = require("opener");
-
         var suggestions = Array.prototype.concat.apply([], results);
 
         if (suggestions.length == 0) {
@@ -287,10 +253,12 @@ async function cmake_online_help(search: string) {
     });
 }
 
-// this method is called when your extension is activated. activation is
-// controlled by the activation events defined in package.json
-export function activate(disposables: Disposable[]) {
-
+/**
+ * This method is called when your extension is activated. activation is
+ * controlled by the activation events defined in package.json
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function activate(_disposables: Disposable[]) {
     commands.registerCommand('cmake.onlineHelp', () => {
         // The code you place here will be executed every time your command is executed
         // Display a message box to the user
@@ -366,10 +334,12 @@ export function activate(disposables: Disposable[]) {
     });
 }
 
-// Show Tooltip on mouse over
+/**
+ * Show Tooltip on mouse over
+ */
 class CMakeExtraInfoSupport implements HoverProvider {
-
-    public provideHover(document: TextDocument, position: Position, token: CancellationToken): Thenable<Hover> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public provideHover(document: TextDocument, position: Position, _token: CancellationToken): Thenable<Hover> {
         let range = document.getWordRangeAtPosition(position);
         let value = document.getText(range);
         let promises = cmake_help_all();
@@ -379,7 +349,7 @@ class CMakeExtraInfoSupport implements HoverProvider {
             cmVariablesSuggestionsExact(value),
             cmModulesSuggestionsExact(value),
             cmPropertiesSuggestionsExact(value),
-        ]).then(function (results) {
+        ],).then(function (results) {
             var suggestions = Array.prototype.concat.apply([], results);
             if (suggestions.length == 0) {
                 return null;
@@ -405,7 +375,9 @@ function vscodeKindFromCMakeCodeClass(kind: string): CompletionItemKind {
         case "module":
             return CompletionItemKind.Module;
     }
-    return CompletionItemKind.Property; // TODO@EG additional mappings needed?
+
+    // TODO@EG additional mappings needed?
+    return CompletionItemKind.Property;
 }
 
 function cmakeTypeFromVsCodeKind(kind?: CompletionItemKind): string {
@@ -419,7 +391,6 @@ function cmakeTypeFromVsCodeKind(kind?: CompletionItemKind): string {
     }
     return "property";
 }
-
 
 function suggestionsHelper(
     cmake_cmd: Promise<string>,
@@ -446,7 +417,6 @@ function suggestionsHelper(
             } else {
                 resolve([]);
             }
-
         }).catch(function (err: Error) {
             reject(err);
         });
@@ -522,7 +492,8 @@ function cmModulesSuggestionsExact(currentWord: string): Thenable<CompletionItem
 class CMakeSuggestionSupport implements CompletionItemProvider {
     public excludeTokens: string[] = ['string', 'comment', 'numeric'];
 
-    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Thenable<CompletionItem[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public provideCompletionItems(document: TextDocument, position: Position, _token: CancellationToken): Thenable<CompletionItem[]> {
         let wordAtPosition = document.getWordRangeAtPosition(position);
         var currentWord = '';
         if (wordAtPosition && wordAtPosition.start.character < position.character) {
@@ -543,7 +514,8 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
         });
     }
 
-    public resolveCompletionItem(item: CompletionItem, token: CancellationToken): Thenable<CompletionItem> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public resolveCompletionItem(item: CompletionItem, _token: CancellationToken): Thenable<CompletionItem> {
         let promises = cmake_help_all();
         let type = cmakeTypeFromVsCodeKind(item.kind);
         return promises[type](item.label).then(function (result: string) {
@@ -552,7 +524,6 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
         });
     }
 }
-
 
 // CMake Language Definition
 
@@ -649,4 +620,3 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
 //             ],
 //         };
 //     }
-
