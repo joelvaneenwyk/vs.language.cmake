@@ -1,0 +1,11 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions:
+  - name: vs-language-cmake
+    path: ./.vscode/vs-language-cmake.txt
+    addWords: true
+dictionaries:
+  - vs-language-cmake
+words: []
+ignoreWords: []
+import: []

@@ -1,11 +1,20 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import {
-    workspace, window, languages,
-    TextDocument, DocumentSelector, Position, commands,
-    CompletionItemKind, CompletionItem, SnippetString,
-    CompletionItemProvider, Hover, HoverProvider,
-    Disposable, CancellationToken
+    CancellationToken,
+    CompletionItem,
+    CompletionItemKind,
+    CompletionItemProvider,
+    Disposable,
+    DocumentSelector,
+    Hover, HoverProvider,
+    Position,
+    SnippetString,
+    TextDocument,
+    commands,
+    languages,
+    window,
+    workspace
 } from 'vscode';
 import child_process = require("child_process");
 
@@ -19,7 +28,7 @@ function strEquals(word: string, pattern: string): boolean {
 }
 
 /// configuration helpers
-function config<T>(key: string, defaultValue?: T): T {
+function config<T extends object | string>(key: string, defaultValue: T): T {
     const cmake_conf = workspace.getConfiguration('cmake');
     return cmake_conf.get<T>(key, defaultValue);
 }
@@ -32,11 +41,11 @@ function commandArgs2Array(text: string): string[] {
     let arr: string[] = [];
     let argPart: string | null = null;
 
-    text && text.split(" ").forEach(function (arg) {
+    text && text.split(" ").forEach(function (arg: string) {
         if ((re.test(arg) || re2.test(arg)) && !argPart) {
             arr.push(arg);
         } else {
-            argPart = argPart ? argPart + " " + arg : arg;
+            argPart = argPart !== null ? argPart + " " + arg : arg;
             // If part is complete (ends with a double quote), we can add it to the array
             if (/"$/.test(argPart)) {
                 arr.push(argPart);
@@ -49,27 +58,38 @@ function commandArgs2Array(text: string): string[] {
 
 /// Cmake process helpers
 
+
+interface CMakeError extends Error {
+    code?: string;
+}
+
 // Simple helper function that invoke the CMAKE executable
 // and return a promise with stdout
 let cmake = (args: string[]): Promise<string> => {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject): void => {
         let cmake_config = config<string>('cmakePath', 'cmake');
-        let cmake_args = commandArgs2Array(cmake_config)
-        let cmd = child_process.spawn(cmake_args[0], cmake_args.slice(1, cmake_args.length)
-            .concat(args.map(arg => { return arg.replace(/\r/gm, ''); })));
+        let cmake_args = commandArgs2Array(cmake_config);
+        let cmd = child_process.spawn(
+            cmake_args[0],
+            cmake_args
+                .slice(1, cmake_args.length)
+                .concat(args.map(arg => { return arg.replace(/\r/gm, ''); }))
+        );
         let stdout: string = '';
         cmd.stdout.on('data', function (data) {
             var txt: string = data.toString();
             stdout += txt.replace(/\r/gm, '');
         });
-        cmd.on("error", function (error) {
-            if (error && (<any>error).code === 'ENOENT') {
+        cmd.on("error", function (error: CMakeError) {
+            if (error && error.code === 'ENOENT') {
                 window.showInformationMessage('The "cmake" command is not found in PATH.  Install it or use `cmake.cmakePath` in the workspace settings to define the CMake executable binary.');
             }
             reject();
         });
-        cmd.on('exit', function () {
-            resolve(stdout);
+        cmd.on('exit', function (result) {
+            if (result !== null) {
+                resolve(stdout);
+            }
         });
     });
 }
@@ -77,11 +97,14 @@ let cmake = (args: string[]): Promise<string> => {
 
 function _extractVersion(output: string): string {
     let re = /cmake\s+version\s+(\d+.\d+.\d+)/;
+    let version: string | null = null;
     if (re.test(output)) {
         let result = re.exec(output);
-        return result[1];
+        if (result !== null) {
+            version = result[1];
+        }
     }
-    return '';
+    return version ?? '';
 }
 
 async function cmake_version(): Promise<string> {
@@ -132,7 +155,7 @@ function cmake_help_command(name: string): Promise<string> {
                 }
             });
         }, function (e) { })
-        .then(function (n: string) {
+        .then((n: string): Promise<string> => {
             return cmake(['--help-command', n]);
         }, null);
 }
@@ -153,7 +176,9 @@ function cmake_help_variable(name: string): Promise<string> {
                     reject('not found');
                 }
             });
-        }, function (e) { }).then(function (name: string) { return cmake(['--help-variable', name]); }, null);
+        }, function (e) { }).then((name: string) => {
+            return cmake(['--help-variable', name]);
+        }, null);
 }
 
 
@@ -172,7 +197,10 @@ function cmake_help_property(name: string): Promise<string> {
                     reject('not found');
                 }
             });
-        }, function (e) { }).then(function (name: string) { return cmake(['--help-property', name]); }, null);
+        }, (e): void => { })
+        .then((name: string): Promise<string> => {
+            return cmake(['--help-property', name]);
+        }, null);
 }
 
 function cmake_help_module_list(): Promise<string> {
@@ -190,7 +218,9 @@ function cmake_help_module(name: string): Promise<string> {
                     reject('not found');
                 }
             });
-        }, function (e) { }).then(function (name: string) { return cmake(['--help-module', name]); }, null);
+        }, (e) => { }).then((name: string): Promise<string> => {
+            return cmake(['--help-module', name]);
+        }, null);
 }
 
 function cmake_help_all() {
@@ -378,7 +408,7 @@ function vscodeKindFromCMakeCodeClass(kind: string): CompletionItemKind {
     return CompletionItemKind.Property; // TODO@EG additional mappings needed?
 }
 
-function cmakeTypeFromVsCodeKind(kind: CompletionItemKind): string {
+function cmakeTypeFromVsCodeKind(kind?: CompletionItemKind): string {
     switch (kind) {
         case CompletionItemKind.Function:
             return "function";
@@ -392,21 +422,22 @@ function cmakeTypeFromVsCodeKind(kind: CompletionItemKind): string {
 
 
 function suggestionsHelper(
-    cmake_cmd: Promise<string>, currentWord: string, type: string, insertText: string | null,
-    matchPredicate: (p: string) => boolean
+    cmake_cmd: Promise<string>,
+    currentWord: string, type: string,
+    insertText: null | string | ((p: string) => string),
+    matchPredicate: (l: string, p: string) => boolean
 ): Thenable<CompletionItem[]> {
     return new Promise(function (resolve, reject) {
         cmake_cmd.then(function (stdout: string) {
-            let commands = stdout.split('\n').filter(function (v) { return matchPredicate(v, currentWord) });
+            let commands = stdout.split('\n').filter(function (v: string) { return matchPredicate(v, currentWord) });
             if (commands.length > 0) {
-                let suggestions = commands.map(function (command_name) {
+                let suggestions = commands.map(function (command_name: string) {
                     var item = new CompletionItem(command_name);
                     item.kind = vscodeKindFromCMakeCodeClass(type);
-                    if (insertText == null || insertText == '') {
+                    if (typeof insertText === 'string') {
                         item.insertText = command_name;
-                    } else {
+                    } else if (typeof insertText === 'function') {
                         let snippet = new SnippetString(insertText(command_name));
-
                         item.insertText = snippet;
                     }
                     return item;
@@ -416,11 +447,12 @@ function suggestionsHelper(
                 resolve([]);
             }
 
-        }).catch(function (err) {
+        }).catch(function (err: Error) {
             reject(err);
         });
     });
 }
+
 function cmModuleInsertText(module: string) {
     if (module.indexOf('Find') == 0) {
         return 'find_package(' + module.replace('Find', '') + '${1: REQUIRED})';
@@ -437,10 +469,11 @@ function cmFunctionInsertText(func: string): string {
         : func + '(${1})';
 }
 
-function cmVariableInsertText(variable: string) {
+function cmVariableInsertText(variable: string): string {
     return variable.replace(/<(.*)>/g, '${1:<$1>}');
 }
-function cmPropertyInsertText(variable: string) {
+
+function cmPropertyInsertText(variable: string): string {
     return variable.replace(/<(.*)>/g, '${1:<$1>}');
 }
 
@@ -487,9 +520,7 @@ function cmModulesSuggestionsExact(currentWord: string): Thenable<CompletionItem
 }
 
 class CMakeSuggestionSupport implements CompletionItemProvider {
-    public triggerCharacters: string[];
     public excludeTokens: string[] = ['string', 'comment', 'numeric'];
-
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Thenable<CompletionItem[]> {
         let wordAtPosition = document.getWordRangeAtPosition(position);

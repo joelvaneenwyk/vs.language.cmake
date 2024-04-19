@@ -2,9 +2,9 @@
 
 import ts from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import eslintConfigPrettier from "eslint-config-prettier";
 import functional from 'eslint-plugin-functional';
 import imprt from 'eslint-plugin-import'; // 'import' is ambiguous & prettier has trouble
-import eslintConfigPrettier from "eslint-config-prettier";
 import jsdoc from "eslint-plugin-jsdoc";
 
 export default [

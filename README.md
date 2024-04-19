@@ -9,7 +9,7 @@ This extension provides support for [CMake](http://www.cmake.org/) in [Visual St
 ## Features
 
 - Colorization
-- Completion Lists 
+- Completion Lists
 
 ![completion](images/cmake2.gif)
 
@@ -29,7 +29,6 @@ This extension provides support for [CMake](http://www.cmake.org/) in [Visual St
 
 - Access To Online Help
 
-
 ## Options
 
 The following Visual Studio Code settings are available for the Cmake extension. These can be set in user preferences (cmd+,) or workspace settings (.vscode/settings.json).
@@ -42,12 +41,11 @@ The following Visual Studio Code settings are available for the Cmake extension.
 
 ## Commands
 
-- `CMake: Online Help` to go to the CMake online documentation (according to the current cmake version). 
+- `CMake: Online Help` to go to the CMake online documentation (according to the current cmake version).
 
 ## Acknowledgements
 
 This extension based on the TextMate Syntax from [this project](https://github.com/zyxar/Sublime-CMakeLists).
-
 
 ## Contributors
 
