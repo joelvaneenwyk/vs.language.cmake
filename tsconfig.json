@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
         "target": "es2020",
         "lib": [
             "es2020"
@@ -9,17 +8,19 @@
         "sourceMap": true,
         "strict": true,
         "rootDir": ".",
-        "skipDefaultLibCheck": true,
         "esModuleInterop": true,
         "noImplicitAny": false,
         "paths": {
             "*": [
                 "./node_modules/*",
+                "./*",
                 "./src/*",
-                "./*"
             ]
         }
     },
+    "include": [
+        "src/**/*"
+    ],
     "exclude": [
         "node_modules",
         ".vscode-test"

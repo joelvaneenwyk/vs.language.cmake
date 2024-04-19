@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "ms-vscode.extension-test-runner"
+        "ms-vscode.extension-test-runner",
+        "dotjoshjohnson.xml",
+        "redhat.vscode-yaml"
     ]
 }

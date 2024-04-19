@@ -20,7 +20,9 @@
         "Joel Van Eenwyk"
     ],
     "scripts": {
-        "test": "vscode-test",
+        "test": "tsc -p ./ && vscode-test",
+        "test:mocha": "mocha",
+        "test:vscode": "npm run compile && vscode-test",
         "vscode:prepublish": "tsc -p ./",
         "compile": "tsc -p ./",
         "build": "npm run compile && vsce package --no-dependencies",

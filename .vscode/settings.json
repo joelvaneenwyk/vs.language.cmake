@@ -20,7 +20,6 @@
             "source.organizeImports": "explicit"
         }
     },
-    "typescript.tsdk": "./node_modules/typescript/lib",
     "typescript.check.npmIsInstalled": true,
     "typescript.experimental.tsserver.web.typeAcquisition.enabled": true,
     "typescript.tsserver.experimental.enableProjectDiagnostics": true,
@@ -28,6 +27,13 @@
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "typescript.tsc.autoDetect": "watch",
     "typescript.workspaceSymbols.scope": "allOpenProjects",
+    "testing.countBadge": "failed",
+    "testing.showAllMessages": true,
+    "testing.showCoverageInExplorer": true,
+    "testing.gutterEnabled": true,
+    "testing.openTesting": "openOnTestFailure",
+    "eslint.format.enable": true,
+    "eslint.codeActionsOnSave.mode": "problems",
     "eslint.lintTask.enable": true,
     "eslint.validate": [
         "javascript",

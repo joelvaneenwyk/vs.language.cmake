@@ -5,6 +5,7 @@
  * Import the module and reference it with the alias vscode in your code below
  */
 
+import { spawn } from "child_process";
 import opener from 'opener'; // This requires esModuleInterop to be enabled in 'tsconfig.json'
 import {
     CancellationToken,
@@ -22,7 +23,7 @@ import {
     window,
     workspace
 } from 'vscode';
-import child_process = require("child_process");
+
 /// strings Helpers
 function strContains(word: string, pattern: string): boolean {
     return word.indexOf(pattern) > -1;
@@ -74,7 +75,7 @@ function cmake(args: string[]): Promise<string> {
     return new Promise((resolve, reject): void => {
         let cmake_config = config<string>('cmakePath', 'cmake');
         let cmake_args = commandArgs2Array(cmake_config);
-        let cmd = child_process.spawn(
+        let cmd = spawn(
             cmake_args[0],
             cmake_args
                 .slice(1, cmake_args.length)
@@ -266,13 +267,12 @@ export function activate(_disposables: Disposable[] = []) {
         if (!editor) {
             return; // No open text editor
         }
-        var selection = editor.selection;
+        let selection = editor.selection;
         let document = editor.document;
         let position = selection.start;
-        var currentWord = document.getText(selection);
+        let currentSelection = document.getText(selection);
         let wordAtPosition = document.getWordRangeAtPosition(position);
-
-        var currentWord = '';
+        let currentWord = currentSelection;
 
         if (wordAtPosition && wordAtPosition.start.character < position.character) {
             var word = document.getText(wordAtPosition);

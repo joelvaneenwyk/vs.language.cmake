@@ -10,3 +10,5 @@ bun.lockb
 
 /extension.js
 /extension.js.map
+
+.vscode-test/

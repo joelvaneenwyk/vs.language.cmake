@@ -1,17 +1,40 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-	"version": "0.1.0",
-	"configurations": [
-		{
-			"name": "Launch Extension",
-			"type": "extensionHost",
-			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
-			"stopOnEntry": false,
-			"sourceMaps": true,
-			"outDir": "${workspaceRoot}/out",
-			"preLaunchTask": "npm",
-			"request": "launch"
-		}
-	]
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Launch Extension",
+            "type": "extensionHost",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "sourceMaps": true,
+            "preLaunchTask": "npm",
+            "request": "launch"
+        },
+        {
+            "name": "Extension Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ]
+        }
+    ]
 }
