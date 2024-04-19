@@ -5,8 +5,8 @@ node_modules
 .BROWSE.VC.DB*
 .yarn/
 .pnp.*
-yarn.lock
 package-lock.json
+bun.lockb
 
 /extension.js
 /extension.js.map
