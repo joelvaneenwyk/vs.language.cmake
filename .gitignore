@@ -3,3 +3,10 @@ node_modules
 .vscode/.browse.VC.db
 *.vsix
 .BROWSE.VC.DB*
+.yarn/
+.pnp.*
+yarn.lock
+package-lock.json
+
+/extension.js
+/extension.js.map

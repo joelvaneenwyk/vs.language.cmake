@@ -1,6 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import {workspace, window, languages, ExtensionContext, TextDocument, DocumentSelector, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, SnippetString, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken} from 'vscode';
+import { workspace, window, languages, ExtensionContext, TextDocument, DocumentSelector, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, SnippetString, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken } from '@vscode/vsce';
 import util = require('util');
 import child_process = require("child_process");
 
@@ -23,24 +23,24 @@ function config<T>(key: string, defaultValue?: any): T {
 function commandArgs2Array(text: string): string[] {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
     const re2 = /^([^"]|[^"].*?[^"])$/; // Check if argument is NOT surrounded with double-quotes
-  
+
     let arr = [];
     let argPart = null;
-  
-    text && text.split(" ").forEach(function(arg) {
-      if ((re.test(arg) || re2.test(arg)) && !argPart) {
-        arr.push(arg);
-      } else {
-        argPart = argPart ? argPart + " " + arg : arg;
-        // If part is complete (ends with a double quote), we can add it to the array
-        if (/"$/.test(argPart)) {
-          arr.push(argPart);
-          argPart = null;
+
+    text && text.split(" ").forEach(function (arg) {
+        if ((re.test(arg) || re2.test(arg)) && !argPart) {
+            arr.push(arg);
+        } else {
+            argPart = argPart ? argPart + " " + arg : arg;
+            // If part is complete (ends with a double quote), we can add it to the array
+            if (/"$/.test(argPart)) {
+                arr.push(argPart);
+                argPart = null;
+            }
         }
-      }
     });
     return arr;
-  }
+}
 
 /// Cmake process helpers
 
@@ -51,7 +51,7 @@ let cmake = (args: string[]): Promise<string> => {
         let cmake_config = config<string>('cmakePath', 'cmake');
         let cmake_args = commandArgs2Array(cmake_config)
         let cmd = child_process.spawn(cmake_args[0], cmake_args.slice(1, cmake_args.length)
-                .concat(args.map(arg => { return arg.replace(/\r/gm, ''); })));
+            .concat(args.map(arg => { return arg.replace(/\r/gm, ''); })));
         let stdout: string = '';
         cmd.stdout.on('data', function (data) {
             var txt: string = data.toString();
@@ -95,7 +95,7 @@ async function cmake_help_url() {
             version = version.replace(re, '$1/');
         } else {
             let older_versions = [
-                '2.8.12', '2.8.11', '2.8.10', '2.8.9', '2.8.8', '2.8.7', '2.8.6', '2.8.5', '2.8.4', '2.8.3', '2.8.2', '2.8.1', '2.8.0', '2.6' 
+                '2.8.12', '2.8.11', '2.8.10', '2.8.9', '2.8.8', '2.8.7', '2.8.6', '2.8.5', '2.8.4', '2.8.3', '2.8.2', '2.8.1', '2.8.0', '2.6'
             ];
             if (older_versions.indexOf(version) == -1) {
                 version = 'latest/';
@@ -209,7 +209,7 @@ function cmake_help_all() {
 
 async function cmake_online_help(search: string) {
     let url = await cmake_help_url();
-    let v2x = url.endsWith('html'); // cmake < 3.0 
+    let v2x = url.endsWith('html'); // cmake < 3.0
     return Promise.all([
         cmCommandsSuggestionsExact(search),
         cmVariablesSuggestionsExact(search),
@@ -242,9 +242,9 @@ async function cmake_online_help(search: string) {
                     type = 'command';
                 }
                 search = search.replace(/[<>]/g, '');
-                if(v2x){
-                    opener(url + '#' + type + ':' + search);                    
-                }else {
+                if (v2x) {
+                    opener(url + '#' + type + ':' + search);
+                } else {
                     opener(url + type + '/' + search + '.html');
                 }
             }
@@ -278,7 +278,7 @@ export function activate(disposables: Disposable[]) {
 
         window.showInputBox({ prompt: 'Search on Cmake online documentation', placeHolder: currentWord }).then(function (result) {
             if (typeof result != 'undefined') { // Escape
-                if (result.length === 0) { // 
+                if (result.length === 0) { //
                     result = currentWord;
                 }
                 if (result != "") {
@@ -354,7 +354,7 @@ class CMakeExtraInfoSupport implements HoverProvider {
             return promises[cmakeTypeFromvscodeKind(suggestion.kind)](suggestion.label).then(function (result: string) {
                 let lines = result.split('\n');
                 lines = lines.slice(2, lines.length);
-                let hover = new Hover({ language: 'md', value: lines.join('\n') });                
+                let hover = new Hover({ language: 'md', value: lines.join('\n') });
                 return hover;
             });
         });
@@ -542,7 +542,7 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
 //         ];
 //         public textAfterBrackets:boolean = true;
 //         public variable= /\$\{\w+\}/;
-//        public  enhancedBrackets = [           
+//        public  enhancedBrackets = [
 //             {
 //                 openTrigger: '\)',
 //                 open: /if\((\w*)\)/i,
