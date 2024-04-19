@@ -4,28 +4,28 @@
 
 This extension provides support for [CMake](http://www.cmake.org/) in [Visual Studio Code](https://code.visualstudio.com/).
 
-![screencast](images/cmake1.gif)
+![screencast](data/images/cmake1.gif)
 
 ## Features
 
 - Colorization
 - Completion Lists
 
-![completion](images/cmake2.gif)
+![completion](data/images/cmake2.gif)
 
 - Code comments
 
-![comment](images/cmake3.gif)
+![comment](data/images/cmake3.gif)
 
 - Snippets
 
-![find_package](images/cmake5.gif)
+![find_package](data/images/cmake5.gif)
 
-![include](images/cmake6.gif)
+![include](data/images/cmake6.gif)
 
 - Quick Help
 
-![tooltip](images/cmake4.gif)
+![tooltip](data/images/cmake4.gif)
 
 - Access To Online Help
 

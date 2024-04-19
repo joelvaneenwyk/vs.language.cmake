@@ -5,7 +5,7 @@
     "displayName": "CMake Support [FORK]",
     "description": "Additional CMake support for Visual Studio Code",
     "license": "MIT",
-    "icon": "images/icon.png",
+    "icon": "data/images/icon.png",
     "main": "./out/extension",
     "packageManager": "npm@10.5.2",
     "engines": {

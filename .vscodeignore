@@ -6,7 +6,7 @@ typings/**
 tsconfig.json
 vsc-extension-quickstart.md
 npm-debug.log
-screenshots/**
+data/screenshots/**
 typings/**/*
 .vscode/**/*
 tsconfig.json
