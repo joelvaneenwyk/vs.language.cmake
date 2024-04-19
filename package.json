@@ -1,9 +1,9 @@
 {
-    "name": "vs-language-cmake",
-    "version": "0.1.17",
-    "publisher": "joelvaneenwyk",
-    "displayName": "CMake",
-    "description": "CMake language support for Visual Studio Code",
+    "name": "vscode-cmake-support",
+    "version": "0.1.18",
+    "publisher": "mycoshiro",
+    "displayName": "CMake Support [FORK]",
+    "description": "Additional CMake support for Visual Studio Code",
     "author": {
         "name": "Nicolas Martin"
     },
@@ -45,6 +45,10 @@
         "deploy": "vsce publish --yarn --no-dependencies",
         "format": "prettier --write \"src/**/*.ts\""
     },
+    "peerDependencies": {
+        "eslint": "^8.56.0",
+        "eslint-plugin-n": "^15.0.0 || ^16.0.0"
+    },
     "dependencies": {
         "@types/eslint": "^8.56.10",
         "@types/mocha": "^10.0.6",
@@ -53,22 +57,22 @@
         "@types/vscode": "^1.88.0",
         "@typescript-eslint/eslint-plugin": "^7.7.0",
         "@typescript-eslint/parser": "^7.7.0",
-        "@vscode/vsce": "^2.25.0",
-        "eslint": "^8.0.1",
+        "@vscode/vsce": "^2.26.0",
+        "eslint": "^9.0.0",
         "eslint-config-love": "^47.0.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-functional": "^6.5.1",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-jsdoc": "^48.2.3",
-        "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
-        "eslint-plugin-promise": "^6.0.0",
+        "eslint-plugin-n": "^17.2.1",
+        "eslint-plugin-promise": "^6.1.1",
         "eslint-prettier-config": "^1.0.1",
         "mocha": "^10.4.0",
         "opener": "^1.5.2",
         "prettier": "^3.2.5",
         "prettier-plugin-import-sort": "^0.0.7",
         "ts-node": "^10.9.2",
-        "typescript": ">=4.3.5 <5.4.0"
+        "typescript": "^5.4.5"
     },
     "vsce": {
         "dependencies": true,
