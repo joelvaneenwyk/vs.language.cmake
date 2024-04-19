@@ -258,7 +258,7 @@ async function cmake_online_help(search: string) {
  * controlled by the activation events defined in package.json
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function activate(_disposables: Disposable[]) {
+export function activate(_disposables: Disposable[] = []) {
     commands.registerCommand('cmake.onlineHelp', () => {
         // The code you place here will be executed every time your command is executed
         // Display a message box to the user

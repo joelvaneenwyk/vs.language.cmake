@@ -5,10 +5,10 @@ const config = {
     printWidth: 120,
     singleQuote: true,
     semi: true,
+    useTabs: false,
     trailingComma: 'none',
-    plugins: [
-        import.meta.resolve('prettier-plugin-import-sort')
-    ]
+    experimentalTernaries: true,
+    embeddedLanguageFormatting: 'auto'
 };
 
 export default config;

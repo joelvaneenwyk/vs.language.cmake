@@ -4,19 +4,36 @@
     "publisher": "mycoshiro",
     "displayName": "CMake Support [FORK]",
     "description": "Additional CMake support for Visual Studio Code",
+    "license": "MIT",
+    "icon": "images/icon.png",
+    "main": "./out/extension",
+    "packageManager": "npm@10.5.2",
+    "engines": {
+        "vscode": "^1.74.0",
+        "node": ">=18",
+        "npm": ">=9"
+    },
     "author": {
         "name": "Nicolas Martin"
     },
     "maintainers": [
         "Joel Van Eenwyk"
     ],
+    "scripts": {
+        "test": "vscode-test",
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -p ./",
+        "build": "npm run compile && vsce package --no-dependencies",
+        "lint": "eslint \"src/**/*.ts\"",
+        "watch": "tsc -watch -p ./",
+        "deploy": "vsce publish --no-dependencies",
+        "format": "prettier --write \"src/**/*.ts\""
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/joelvaneenwyk/vs.language.cmake"
     },
-    "bugs": {
-        "url": "https://github.com/joelvaneenwyk/vs.language.cmake/issues"
-    },
+    "bugs": "https://github.com/joelvaneenwyk/vs.language.cmake/issues",
     "homepage": "https://github.com/joelvaneenwyk/vs.language.cmake/blob/develop/README.md",
     "keywords": [
         "CMake",
@@ -24,29 +41,13 @@
     ],
     "categories": [
         "Programming Languages",
-        "Snippets",
-        "Other"
+        "Snippets"
     ],
-    "license": "MIT",
-    "icon": "images/icon.png",
-    "main": "./out/extension",
-    "packageManager": "yarn@4.1.1+sha256.f3cc0eda8e5560e529c7147565b30faa43b4e472d90e8634d7134a37c7f59781",
-    "engines": {
-        "vscode": "^1.74.0",
-        "node": ">=18",
-        "npm": ">=9"
-    },
-    "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -p ./",
-        "build": "yarn compile && vsce package --yarn --no-dependencies",
-        "lint": "eslint \"src/**/*.ts\"",
-        "watch": "tsc -watch -p ./",
-        "deploy": "vsce publish --yarn --no-dependencies",
-        "format": "prettier --write \"src/**/*.ts\""
+    "resolutions": {
+        "glob": ">=10.3.12"
     },
     "peerDependencies": {
-        "eslint": "^8.56.0",
+        "eslint": ">=6.0.0",
         "eslint-plugin-n": "^15.0.0 || ^16.0.0"
     },
     "dependencies": {
@@ -57,26 +58,25 @@
         "@types/vscode": "^1.88.0",
         "@typescript-eslint/eslint-plugin": "^7.7.0",
         "@typescript-eslint/parser": "^7.7.0",
+        "@vscode/test-cli": "^0.0.9",
+        "@vscode/test-electron": "^2.3.9",
         "@vscode/vsce": "^2.26.0",
-        "eslint": "^9.0.0",
         "eslint-config-love": "^47.0.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-functional": "^6.5.1",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-jsdoc": "^48.2.3",
-        "eslint-plugin-n": "^17.2.1",
         "eslint-plugin-promise": "^6.1.1",
         "eslint-prettier-config": "^1.0.1",
         "mocha": "^10.4.0",
         "opener": "^1.5.2",
         "prettier": "^3.2.5",
-        "prettier-plugin-import-sort": "^0.0.7",
         "ts-node": "^10.9.2",
         "typescript": "^5.4.5"
     },
     "vsce": {
-        "dependencies": true,
-        "yarn": true
+        "dependencies": false,
+        "yarn": false
     },
     "galleryBanner": {
         "color": "#5c2d91",
