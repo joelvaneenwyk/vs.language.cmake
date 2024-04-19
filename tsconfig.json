@@ -8,7 +8,14 @@
         "outDir": "out",
         "sourceMap": true,
         "strict": true,
-        "rootDir": "src"
+        "rootDir": ".",
+        "noImplicitAny": false,
+        "paths": {
+            "*": [
+                "./node_modules/*",
+                "./src/*"
+            ]
+        }
     },
     "exclude": [
         "node_modules",
