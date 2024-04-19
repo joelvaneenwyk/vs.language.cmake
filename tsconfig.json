@@ -9,6 +9,8 @@
         "strict": true,
         "rootDir": ".",
         "esModuleInterop": true,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "noImplicitAny": false,
         "paths": {
             "*": [
