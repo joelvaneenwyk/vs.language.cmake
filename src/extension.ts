@@ -1,20 +1,25 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { workspace, window, languages, ExtensionContext, TextDocument, DocumentSelector, Position, commands, LanguageConfiguration, CompletionItemKind, CompletionItem, SnippetString, CompletionItemProvider, Hover, HoverProvider, Disposable, CancellationToken } from '@vscode/vsce';
-import util = require('util');
+import {
+    workspace, window, languages,
+    TextDocument, DocumentSelector, Position, commands,
+    CompletionItemKind, CompletionItem, SnippetString,
+    CompletionItemProvider, Hover, HoverProvider,
+    Disposable, CancellationToken
+} from 'vscode';
 import child_process = require("child_process");
 
 /// strings Helpers
-function strContains(word, pattern) {
+function strContains(word: string, pattern: string): boolean {
     return word.indexOf(pattern) > -1;
 }
 
-function strEquals(word, pattern) {
+function strEquals(word: string, pattern: string): boolean {
     return word == pattern;
 }
 
 /// configuration helpers
-function config<T>(key: string, defaultValue?: any): T {
+function config<T>(key: string, defaultValue?: T): T {
     const cmake_conf = workspace.getConfiguration('cmake');
     return cmake_conf.get<T>(key, defaultValue);
 }
@@ -24,8 +29,8 @@ function commandArgs2Array(text: string): string[] {
     const re = /^"[^"]*"$/; // Check if argument is surrounded with double-quotes
     const re2 = /^([^"]|[^"].*?[^"])$/; // Check if argument is NOT surrounded with double-quotes
 
-    let arr = [];
-    let argPart = null;
+    let arr: string[] = [];
+    let argPart: string | null = null;
 
     text && text.split(" ").forEach(function (arg) {
         if ((re.test(arg) || re2.test(arg)) && !argPart) {
@@ -63,7 +68,7 @@ let cmake = (args: string[]): Promise<string> => {
             }
             reject();
         });
-        cmd.on('exit', function (code) {
+        cmd.on('exit', function () {
             resolve(stdout);
         });
     });
@@ -229,7 +234,7 @@ async function cmake_online_help(search: string) {
             }
         } else {
             let suggestion = suggestions[0];
-            let type = cmakeTypeFromvscodeKind(suggestion.kind);
+            let type = cmakeTypeFromVsCodeKind(suggestion.kind);
             if (type == 'property') {
                 if (v2x) {
                     opener(url);
@@ -351,7 +356,7 @@ class CMakeExtraInfoSupport implements HoverProvider {
             }
             let suggestion: CompletionItem = suggestions[0];
 
-            return promises[cmakeTypeFromvscodeKind(suggestion.kind)](suggestion.label).then(function (result: string) {
+            return promises[cmakeTypeFromVsCodeKind(suggestion.kind)](suggestion.label).then(function (result: string) {
                 let lines = result.split('\n');
                 lines = lines.slice(2, lines.length);
                 let hover = new Hover({ language: 'md', value: lines.join('\n') });
@@ -373,7 +378,7 @@ function vscodeKindFromCMakeCodeClass(kind: string): CompletionItemKind {
     return CompletionItemKind.Property; // TODO@EG additional mappings needed?
 }
 
-function cmakeTypeFromvscodeKind(kind: CompletionItemKind): string {
+function cmakeTypeFromVsCodeKind(kind: CompletionItemKind): string {
     switch (kind) {
         case CompletionItemKind.Function:
             return "function";
@@ -386,7 +391,10 @@ function cmakeTypeFromvscodeKind(kind: CompletionItemKind): string {
 }
 
 
-function suggestionsHelper(cmake_cmd, currentWord: string, type: string, insertText, matchPredicate): Thenable<CompletionItem[]> {
+function suggestionsHelper(
+    cmake_cmd: Promise<string>, currentWord: string, type: string, insertText: string | null,
+    matchPredicate: (p: string) => boolean
+): Thenable<CompletionItem[]> {
     return new Promise(function (resolve, reject) {
         cmake_cmd.then(function (stdout: string) {
             let commands = stdout.split('\n').filter(function (v) { return matchPredicate(v, currentWord) });
@@ -421,18 +429,18 @@ function cmModuleInsertText(module: string) {
     }
 }
 
-function cmFunctionInsertText(func: string) {
+function cmFunctionInsertText(func: string): string {
     let scoped_func = ['if', 'function', 'while', 'macro', 'foreach'];
-    let is_scoped = scoped_func.reduceRight(function (prev, name, idx, array) { return prev || func == name; }, false);
-    if (is_scoped)
-        return func + '(${1})\n\t\nend' + func + '(${1})\n';
-    else
-        return func + '(${1})'
+    let is_scoped = scoped_func.reduceRight(function (prev, name) { return prev || func == name; }, false);
+    return is_scoped
+        ? func + '(${1})\n\t\nend' + func + '(${1})\n'
+        : func + '(${1})';
 }
+
 function cmVariableInsertText(variable: string) {
     return variable.replace(/<(.*)>/g, '${1:<$1>}');
 }
-function cmPropetryInsertText(variable: string) {
+function cmPropertyInsertText(variable: string) {
     return variable.replace(/<(.*)>/g, '${1:<$1>}');
 }
 
@@ -449,7 +457,7 @@ function cmVariablesSuggestions(currentWord: string): Thenable<CompletionItem[]>
 
 function cmPropertiesSuggestions(currentWord: string): Thenable<CompletionItem[]> {
     let cmd = cmake_help_property_list();
-    return suggestionsHelper(cmd, currentWord, 'property', cmPropetryInsertText, strContains);
+    return suggestionsHelper(cmd, currentWord, 'property', cmPropertyInsertText, strContains);
 }
 
 function cmModulesSuggestions(currentWord: string): Thenable<CompletionItem[]> {
@@ -470,7 +478,7 @@ function cmVariablesSuggestionsExact(currentWord: string): Thenable<CompletionIt
 
 function cmPropertiesSuggestionsExact(currentWord: string): Thenable<CompletionItem[]> {
     let cmd = cmake_help_property_list();
-    return suggestionsHelper(cmd, currentWord, 'property', cmPropetryInsertText, strEquals);
+    return suggestionsHelper(cmd, currentWord, 'property', cmPropertyInsertText, strEquals);
 }
 
 function cmModulesSuggestionsExact(currentWord: string): Thenable<CompletionItem[]> {
@@ -506,7 +514,7 @@ class CMakeSuggestionSupport implements CompletionItemProvider {
 
     public resolveCompletionItem(item: CompletionItem, token: CancellationToken): Thenable<CompletionItem> {
         let promises = cmake_help_all();
-        let type = cmakeTypeFromvscodeKind(item.kind);
+        let type = cmakeTypeFromVsCodeKind(item.kind);
         return promises[type](item.label).then(function (result: string) {
             item.documentation = result.split('\n')[3];
             return item;

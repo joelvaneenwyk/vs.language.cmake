@@ -1,125 +1,131 @@
 {
-  "name": "vs-language-cmake",
-  "version": "0.1.17",
-  "publisher": "joelvaneenwyk",
-  "displayName": "CMake",
-  "description": "CMake language support for Visual Studio Code",
-  "author": {
-    "name": "Nicolas Martin"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/joelvaneenwyk/vs.language.cmake"
-  },
-  "bugs": {
-    "url": "https://github.com/joelvaneenwyk/vs.language.cmake/issues"
-  },
-  "homepage": "https://github.com/joelvaneenwyk/vs.language.cmake/blob/develop/README.md",
-  "keywords": [
-    "CMake",
-    "Syntax"
-  ],
-  "categories": [
-    "Programming Languages",
-    "Snippets",
-    "Other"
-  ],
-  "license": "MIT",
-  "icon": "images/icon.png",
-  "main": "./out/extension",
-  "packageManager": "yarn@4.1.1+sha256.f3cc0eda8e5560e529c7147565b30faa43b4e472d90e8634d7134a37c7f59781",
-  "engines": {
-    "vscode": "^1.10.0",
-    "node": ">=18",
-    "npm": ">=9"
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "build": "yarn compile && vsce package",
-    "lint": "eslint \"src/**/*.ts\"",
-    "watch": "tsc -watch -p ./",
-    "deploy": "vsce publish --yarn"
-  },
-  "dependencies": {
-    "@types/mocha": "^10.0.6",
-    "@types/node": "^20.12.7",
-    "@types/vscode": "^1.88.0",
-    "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "@vscode/vsce": "^2.25.0",
-    "eslint": "^8.0.1",
-    "eslint-config-love": "^47.0.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-prettier-config": "^1.0.1",
-    "mocha": "^10.4.0",
-    "opener": "^1.5.2",
-    "ts-node": "^10.9.2",
-    "typescript": "*"
-  },
-  "vsce": {
-    "dependencies": true,
-    "yarn": true
-  },
-  "galleryBanner": {
-    "color": "#5c2d91",
-    "theme": "dark"
-  },
-  "activationEvents": [
-    "onLanguage:cmake"
-  ],
-  "contributes": {
-    "languages": [
-      {
-        "id": "cmake",
-        "extensions": [
-          ".cmake"
-        ],
-        "filenames": [
-          "CMakelists.txt"
-        ],
-        "aliases": [
-          "CMake"
-        ]
-      },
-      {
-        "id": "cmake-cache",
-        "filenames": [
-          "CMakeCache.txt"
-        ],
-        "aliases": [
-          "CMake Cache"
-        ]
-      }
-    ],
-    "commands": [
-      {
-        "command": "cmake.onlineHelp",
-        "title": "CMake: Online Help"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "cmake",
-        "scopeName": "source.cmake",
-        "path": "./syntaxes/CMake.tmLanguage"
-      },
-      {
-        "language": "cmake-cache",
-        "scopeName": "source.cmakecache",
-        "path": "./syntaxes/CMakeCache.tmLanguage"
-      }
-    ],
-    "configuration": {
-      "title": "CMake configuration",
-      "properties": {
-        "cmake.cmakePath": {
-          "type": "string",
-          "default": "cmake",
-          "description": "The path to CMake generator executable"
-        }
-      }
-    }
-  }
+	"name": "vs-language-cmake",
+	"version": "0.1.17",
+	"publisher": "joelvaneenwyk",
+	"displayName": "CMake",
+	"description": "CMake language support for Visual Studio Code",
+	"author": {
+		"name": "Nicolas Martin"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/joelvaneenwyk/vs.language.cmake"
+	},
+	"bugs": {
+		"url": "https://github.com/joelvaneenwyk/vs.language.cmake/issues"
+	},
+	"homepage": "https://github.com/joelvaneenwyk/vs.language.cmake/blob/develop/README.md",
+	"keywords": [
+		"CMake",
+		"Syntax"
+	],
+	"categories": [
+		"Programming Languages",
+		"Snippets",
+		"Other"
+	],
+	"license": "MIT",
+	"icon": "images/icon.png",
+	"main": "./out/extension",
+	"packageManager": "yarn@4.1.1+sha256.f3cc0eda8e5560e529c7147565b30faa43b4e472d90e8634d7134a37c7f59781",
+	"engines": {
+		"vscode": "^1.74.0",
+		"node": ">=18",
+		"npm": ">=9"
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"build": "yarn compile && vsce package",
+		"lint": "eslint \"src/**/*.ts\"",
+		"watch": "tsc -watch -p ./",
+		"deploy": "vsce publish --yarn",
+		"format": "prettier --write \"src/**/*.ts\""
+	},
+	"dependencies": {
+		"@types/mocha": "^10.0.6",
+		"@types/node": "^20.12.7",
+		"@types/vscode": "^1.88.0",
+		"@typescript-eslint/eslint-plugin": "^7.7.0",
+		"@typescript-eslint/parser": "^7.7.0",
+		"@vscode/vsce": "^2.25.0",
+		"eslint": "^8.0.1",
+		"eslint-config-love": "^47.0.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-functional": "^6.5.1",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-jsdoc": "^48.2.3",
+		"eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+		"eslint-plugin-promise": "^6.0.0",
+		"eslint-prettier-config": "^1.0.1",
+		"mocha": "^10.4.0",
+		"opener": "^1.5.2",
+		"prettier": "^3.2.5",
+		"ts-node": "^10.9.2",
+		"typescript": ">=4.3.5 <5.4.0"
+	},
+	"vsce": {
+		"dependencies": true,
+		"yarn": true
+	},
+	"galleryBanner": {
+		"color": "#5c2d91",
+		"theme": "dark"
+	},
+	"activationEvents": [
+		"onLanguage:cmake"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "cmake",
+				"extensions": [
+					".cmake"
+				],
+				"filenames": [
+					"CMakelists.txt"
+				],
+				"aliases": [
+					"CMake"
+				]
+			},
+			{
+				"id": "cmake-cache",
+				"filenames": [
+					"CMakeCache.txt"
+				],
+				"aliases": [
+					"CMake Cache"
+				]
+			}
+		],
+		"commands": [
+			{
+				"command": "cmake.onlineHelp",
+				"title": "CMake: Online Help"
+			}
+		],
+		"grammars": [
+			{
+				"language": "cmake",
+				"scopeName": "source.cmake",
+				"path": "./syntaxes/CMake.tmLanguage"
+			},
+			{
+				"language": "cmake-cache",
+				"scopeName": "source.cmakecache",
+				"path": "./syntaxes/CMakeCache.tmLanguage"
+			}
+		],
+		"configuration": {
+			"title": "CMake configuration",
+			"properties": {
+				"cmake.cmakePath": {
+					"type": "string",
+					"default": "cmake",
+					"description": "The path to CMake generator executable"
+				}
+			}
+		}
+	}
 }
